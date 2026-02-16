@@ -1,0 +1,32 @@
+/ Flashing lights demo, init from SR
+*200
+START,  CLA OSR         /INITIAL VALUE FROM SR
+        DCA LITES       /SAVE THE INITIAL VALUE
+        CLA CLL
+LOOP,   TAD D2INIT      /INITIALIZE DLY2 VALUE
+        DCA DLY2
+        TAD LITES       /LIGHTS STATE INTO THE AC
+LOOP1,  ISZ DLY1
+        JMP LOOP1       /DELAY TO HOLD AC STEADY
+LOOP2,  ISZ DLY2
+        JMP LOOP1
+        RAL             /ROTATE LIGHTS
+        DCA LITES       /AND SAVE IT
+        ISZ SHFCT       / CHECK IF WE'VE LOOPED 12 TIMES
+        JMP LOOP
+        CLA OSR         /READ THE SW REGISTER
+        RAL             /CHECK IF MSB IS ONE
+        SZL
+        JMP I [7600     /RETURN TO OS/8 IF SW0 SET
+        RAR
+        DCA LITES       / SAVE SR INTO LITES, NEW
+        TAD M12         / INIT SHFCT AGAIN
+        DCA SHFCT
+        JMP LOOP        /LOOP IF SW0 IS NOT SET
+DLY1,   0
+DLY2,   0
+D2INIT, 7774
+LITES,  0
+M12,    7764
+SHFCT,  7764
+
